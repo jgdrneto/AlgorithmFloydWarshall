@@ -14,6 +14,8 @@ enum
 
 class AlgorithmFloydWarshall{
 
+	int interaction = 0;
+
 	std::string toStringMatrix(int*** m,std::string name, int period){
 		std::string result="";
 
@@ -33,7 +35,7 @@ class AlgorithmFloydWarshall{
 		for(unsigned int i=0;i<this->numberVertices;i++){
 			for(unsigned int j=0;j<this->numberVertices;j++){
 
-				valor = m[i][j][BEFORE];
+				valor = m[i][j][period];
 
 				if(valor==INT_MAX){
 
@@ -59,6 +61,13 @@ class AlgorithmFloydWarshall{
 		return result;
 	}
 
+	int sum(int left, int right){
+		if(left==INT_MAX || right==INT_MAX){
+			return INT_MAX;
+		}else{
+			return left+right;
+		}
+	}
 
 public:
 	unsigned int numberVertices;
@@ -73,22 +82,18 @@ public:
 		this->path =  new int**[this->numberVertices];
 		
 		for(unsigned int i=0;i<this->numberVertices;i++){
-			d[i] = new int*[this->numberVertices];
-			path[i] =  new int*[this->numberVertices];
+			this->d[i] = new int*[this->numberVertices];
+			this->path[i] =  new int*[this->numberVertices];
 			for(unsigned int j=0;j<this->numberVertices;j++){
-				d[i][j] = new int[QUANT_MATRIX_D];
-				path[i][j] = new int[QUANT_MATRIX_D];
-				for(unsigned int k=0;k<QUANT_MATRIX_D;k++){
-					if(k==BEFORE){
-						d[i][j][BEFORE] = nEdges[(i*this->numberVertices)+j];
-						if(i==j || d[i][j][BEFORE] == INT_MAX){
-							path[i][j][BEFORE] = INT_MAX;
-						}else{
-							path[i][j][BEFORE] = i+1;
-						}
-					}else{
-						d[i][j][k] = 0;
-					}
+				this->d[i][j] = new int[QUANT_MATRIX_D];
+				this->path[i][j] = new int[QUANT_MATRIX_D];
+
+				this->d[i][j][ACTUAL] = nEdges[(i*this->numberVertices)+j];
+				
+				if(i==j || d[i][j][ACTUAL] == INT_MAX){
+					this->path[i][j][ACTUAL] = INT_MAX;
+				}else{
+					this->path[i][j][ACTUAL] = i+1;
 				}
 			}
 		}
@@ -107,20 +112,62 @@ public:
 		delete[] path;
 	}
 
-	std::string toStringBeforeMatrixD(){
-		return this->toStringMatrix(this->d,"Matrix D Before",BEFORE);
+	void updateMatrixes(int*** d, int*** path){
+		for(unsigned int x=0;x<numberVertices;x++){
+			for(unsigned int y=0;y<numberVertices;y++){
+				d[x][y][BEFORE] = d[x][y][ACTUAL];
+				path[x][y][BEFORE] = path[x][y][ACTUAL];
+			}
+		}
 	}
 
-	std::string toStringBeforeMatrixPath(){
+	bool execute(){
 
-		return this->toStringMatrix(this->path,"Matrix Path Before",BEFORE);
+		std::cout << "------------------" <<"Iteraction 0" << "------------------\n" << std::endl;
+
+		std::cout << this->toStringMatrix(this->d, "Matrix D 0", ACTUAL) << std::endl;
+
+		std::cout << this->toStringMatrix(this->path, "Matrix Path 0", ACTUAL) << std::endl;
+		
+		std::cout << "" << std::endl;
+
+		int result=0;
+		for(unsigned int k=0;k<numberVertices;k++){
+
+			this->updateMatrixes(d,path);
+
+			for(unsigned int i=0;i<numberVertices;i++){
+				for(unsigned int j=0;j<numberVertices;j++){
+
+					result = this->sum(d[i][k][BEFORE],d[k][j][BEFORE]);
+
+					if(this->d[i][j][BEFORE]<=result){
+						this->d[i][j][ACTUAL] = this->d[i][j][BEFORE];
+						this->path[i][j][ACTUAL] = this->path[i][j][BEFORE];
+					}else{
+						this->d[i][j][ACTUAL] = result;
+						this->path[i][j][ACTUAL] = this->path[k][j][BEFORE];
+					}
+				}
+			}
+
+			std::cout << "------------------" <<"Iteraction " << (k+1) << "------------------\n" << std::endl;
+
+			std::cout << this->toStringMatrix(this->d, "Matrix D " + std::to_string(k+1),ACTUAL) << std::endl;
+
+			std::cout << this->toStringMatrix(this->path, "Matrix Path " + std::to_string(k+1),ACTUAL) << std::endl;
+		
+			std::cout << "" << std::endl;
+		}
+	
+		for(unsigned int l=0;l<this->numberVertices;l++){
+			if(d[l][l][ACTUAL]<0){
+				return true;
+			}
+		}
+
+		return false;
 	}
-
-	std::string toString(){
-		std::string result = "";
-		return result;
-	}
-
 };
 
 #endif

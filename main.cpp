@@ -14,11 +14,13 @@ int main(int argc, char const *argv[]){
 
 	AlgorithmFloydWarshall algorithmFW(c.numberVertices,c.edges); 
 
-	std::cout << algorithmFW.toStringBeforeMatrixD() << std::endl;
+	bool negativeCicle = algorithmFW.execute();
 
-	std::cout << algorithmFW.toStringBeforeMatrixPath() << std::endl;
+	if(negativeCicle){
+		std::cout << "This graph has negative cycle" << std::endl;
+	}else{
+		std::cout << "This graph has no negative cycle" << std::endl;
+	}
 
-	//std::cout << c.toString() << std::endl;
-	
 	return 0;
 }
