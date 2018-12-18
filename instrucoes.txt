@@ -1,0 +1,3 @@
+Comando para compilar e executar no terminal:
+
+g++ -Wall main.cpp -o main && ./main grafo1.txt

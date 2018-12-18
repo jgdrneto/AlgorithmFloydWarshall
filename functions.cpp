@@ -52,14 +52,13 @@ namespace Interpreter{
 			std::vector<std::string> words = split(line);
 
 			if(words.empty()){
-				std::cerr << "Bad formatted instruction" << std::endl;
-				exit(1);
+				continue;
 			}else{
 				if(vertices==0){
 					vertices=std::stoul(words[0]);
 				}else{
 					if(words.size()!=vertices){
-						std::cerr << "Bad formatted instruction" << std::endl;
+						std::cerr << "Bad formatted instruction 2" << std::endl;
 						exit(1);
 					}else{
 						for(std::string edge : words){
