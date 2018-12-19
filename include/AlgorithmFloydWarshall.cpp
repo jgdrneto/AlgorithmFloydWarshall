@@ -168,6 +168,11 @@ public:
 
 		return false;
 	}
+
+	std::string complexity(){
+		return "Complexity of the Floyd-Warshall algorithm: O(V³ + V)"; 
+	}
+
 };
 
 #endif

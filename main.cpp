@@ -16,6 +16,8 @@ int main(int argc, char const *argv[]){
 
 	bool negativeCicle = algorithmFW.execute();
 
+	std::cout << algorithmFW.complexity() << std::endl;
+
 	if(negativeCicle){
 		std::cout << "This graph has negative cycle" << std::endl;
 	}else{
